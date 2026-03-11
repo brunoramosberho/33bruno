@@ -1044,11 +1044,13 @@ function changeResponse() {
 
 function clearRecord() {
   localStorage.removeItem('rsvp');
+  window.scrollTo(0, 0);
   location.reload();
 }
 
 /* ── INIT: CHECK RETURNING USER ── */
 (function checkReturning() {
+  if (history.scrollRestoration) history.scrollRestoration = 'manual';
   try {
     const saved = JSON.parse(localStorage.getItem('rsvp'));
     if (saved && saved.name && saved.status) {
