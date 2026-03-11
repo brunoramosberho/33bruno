@@ -834,7 +834,7 @@ async function confirmIn() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: 'TU_ACCESS_KEY_AQUI',
+        access_key: 'fc56a20d-1894-4c1f-8713-c95363e25aa2',
         subject: `🎉 ${name} confirma para el cumple de Bruno`,
         message: `${name} confirmó asistencia desde 33br.uno`,
         from_name: name,
@@ -852,7 +852,22 @@ async function confirmIn() {
   );
 }
 
-function confirmOut() {
+async function confirmOut() {
+  const name = document.getElementById('name-input').value.trim() || 'Alguien';
+
+  try {
+    await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: 'fc56a20d-1894-4c1f-8713-c95363e25aa2',
+        subject: `😞 ${name} NO puede venir al cumple de Bruno`,
+        message: `${name} dijo que no puede venir. Desde 33br.uno`,
+        from_name: name,
+      })
+    });
+  } catch(e) {}
+
   const r = outResponses[Math.floor(Math.random() * outResponses.length)];
   showResult(r.icon, r.title, r.msg, r.fine, true);
 }
