@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#111833"/>
+      <stop offset="100%" stop-color="#03040d"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="40%">
+      <stop offset="0%" stop-color="#ffe946" stop-opacity=".4"/>
+      <stop offset="60%" stop-color="#ffe946" stop-opacity=".08"/>
+      <stop offset="100%" stop-color="#ffe946" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="40%" stop-color="#ffe946"/>
+      <stop offset="100%" stop-color="#c9a800"/>
+    </linearGradient>
+    <filter id="textglow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="outerGlow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#ffe946" flood-opacity="0.35"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <rect width="64" height="64" rx="14" fill="url(#glow)"/>
+  <!-- Subtle star dots -->
+  <circle cx="10" cy="8" r=".6" fill="#fff" opacity=".3"/>
+  <circle cx="54" cy="12" r=".5" fill="#fff" opacity=".25"/>
+  <circle cx="8" cy="52" r=".4" fill="#fff" opacity=".2"/>
+  <circle cx="56" cy="48" r=".5" fill="#fff" opacity=".3"/>
+  <circle cx="48" cy="6" r=".3" fill="#fff" opacity=".15"/>
+  <circle cx="14" cy="30" r=".4" fill="#fff" opacity=".2"/>
+  <circle cx="52" cy="32" r=".3" fill="#fff" opacity=".18"/>
+  <!-- Main 33 text -->
+  <text x="32" y="46" text-anchor="middle" font-family="system-ui,-apple-system,'Helvetica Neue',sans-serif" font-weight="900" font-size="36" fill="url(#gold)" filter="url(#outerGlow)" letter-spacing="-1">33</text>
+  <!-- Thin gold accent line -->
+  <line x1="16" y1="52" x2="48" y2="52" stroke="#ffe946" stroke-width=".5" opacity=".4"/>
+</svg>
