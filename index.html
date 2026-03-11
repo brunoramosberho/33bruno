@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruno · 33 · Viernes 20</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Inter:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --space:  #03040d;
+  --deep:   #070b1a;
+  --card:   #0d1224;
+  --line:   #1a2040;
+  --text:   #e8e8f0;
+  --dim:    #4a5070;
+  --gold:   #ffe946;
+  --blue:   #4fc3f7;
+  --red:    #ff3d3d;
+  --glow-blue: rgba(79,195,247,.35);
+  --glow-red:  rgba(255,61,61,.35);
+  --glow-gold: rgba(255,233,70,.3);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--space);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ─── STARFIELD ─── */
+#stars-canvas {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+}
+
+/* ─── CRAWL INTRO ─── */
+#crawl-screen {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.crawl-fade-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 25%;
+  background: linear-gradient(to bottom, #000, transparent);
+  z-index: 10;
+}
+.crawl-fade-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 35%;
+  background: linear-gradient(to top, #000, transparent);
+  z-index: 10;
+}
+
+.crawl-wrapper {
+  position: absolute;
+  bottom: -20px;
+  left: 50%; transform: translateX(-50%);
+  width: min(600px, 90vw);
+  perspective: 350px;
+  transform-origin: bottom center;
+  animation: crawl 17s linear forwards;
+  animation-delay: .5s;
+}
+
+.crawl-inner {
+  transform: rotateX(25deg);
+  transform-origin: bottom center;
+}
+
+.crawl-episode {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--gold);
+  text-align: center; margin-bottom: 40px;
+  display: block;
+}
+
+.crawl-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: 900; color: var(--gold);
+  text-align: center; letter-spacing: .08em;
+  line-height: 1.2; margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.crawl-body {
+  font-size: clamp(14px, 2.5vw, 18px);
+  line-height: 2; color: var(--gold);
+  text-align: justify;
+}
+
+.crawl-body p { margin-bottom: 28px; }
+
+@keyframes crawl {
+  0%   { bottom: -20px; }
+  100% { bottom: 120%; }
+}
+
+.skip-btn {
+  position: absolute; bottom: 32px; right: 32px;
+  z-index: 20;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .25em;
+  text-transform: uppercase; color: rgba(255,233,70,.5);
+  background: none; border: 1px solid rgba(255,233,70,.2);
+  padding: 8px 16px; border-radius: 3px; cursor: pointer;
+  transition: all .2s;
+}
+.skip-btn:hover { color: var(--gold); border-color: rgba(255,233,70,.5); }
+
+/* ─── MAIN CONTENT ─── */
+#main {
+  position: relative; z-index: 1;
+  opacity: 0;
+  transition: opacity .8s ease;
+}
+#main.visible { opacity: 1; }
+
+/* ─── TOP BAR ─── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 40px;
+  z-index: 99;
+  background: linear-gradient(to bottom, rgba(3,4,13,.98), transparent);
+  border-bottom: 1px solid rgba(255,233,70,.04);
+}
+.topbar-left {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--gold);
+}
+.topbar-right {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--dim);
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100svh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: 120px 24px 100px;
+  overflow: hidden;
+}
+
+.planet {
+  position: absolute;
+  bottom: -120px; right: -80px;
+  width: 420px; height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    #1a2a4a 0%, #0d1830 40%, #050d1a 70%, #020509 100%);
+  box-shadow:
+    inset -30px -30px 60px rgba(0,0,0,.8),
+    inset 20px 20px 60px rgba(79,195,247,.06),
+    0 0 80px rgba(79,195,247,.08),
+    0 0 200px rgba(79,195,247,.04);
+  opacity: .55;
+  pointer-events: none;
+}
+
+.hero-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .4em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 32px;
+  opacity: 0; animation: rise .8s ease .1s forwards;
+}
+
+.hero-main {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: clamp(72px, 18vw, 180px);
+  line-height: .85;
+  color: var(--gold);
+  text-shadow: 0 0 40px var(--glow-gold), 0 0 100px rgba(255,233,70,.12);
+  opacity: 0; animation: rise .8s ease .3s forwards;
+}
+
+.hero-name {
+  font-family: 'Orbitron', monospace;
+  font-weight: 400;
+  font-size: clamp(18px, 4vw, 36px);
+  letter-spacing: .25em; text-transform: uppercase;
+  color: var(--text); margin-top: 16px;
+  opacity: 0; animation: rise .8s ease .5s forwards;
+}
+
+.hero-divider {
+  width: 60px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 28px auto;
+  opacity: 0; animation: rise .8s ease .6s forwards;
+}
+
+.hero-sub {
+  font-size: 15px; font-style: italic; font-weight: 300;
+  color: var(--dim); letter-spacing: .04em;
+  max-width: 420px;
+  opacity: 0; animation: rise .8s ease .7s forwards;
+}
+
+.hero-cta-row {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center; margin-top: 44px;
+  opacity: 0; animation: rise .8s ease .9s forwards;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold); color: #08060a;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: .25em;
+  text-transform: uppercase; text-decoration: none;
+  padding: 14px 28px; border-radius: 3px;
+  border: none; cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 0 24px rgba(255,233,70,.3);
+}
+.btn-primary:hover { box-shadow: 0 0 40px rgba(255,233,70,.5); transform: translateY(-1px); }
+
+@keyframes rise {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: none; }
+}
+
+/* ─── RULE ─── */
+.rule {
+  border: none; height: 1px;
+  background: linear-gradient(to right, transparent, var(--line), transparent);
+  margin: 0 40px; position: relative; z-index: 1;
+}
+
+/* ─── MISSION SECTION ─── */
+.mission {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 100px 40px;
+}
+
+.mission-header {
+  display: flex; justify-content: space-between;
+  align-items: baseline; flex-wrap: wrap; gap: 16px;
+  margin-bottom: 72px;
+}
+
+.mission-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 900; letter-spacing: -.01em;
+  color: var(--text);
+}
+.mission-title span { color: var(--gold); }
+
+.mission-code {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .25em;
+  text-transform: uppercase; color: var(--dim);
+}
+
+/* ─── STOPS ─── */
+.stops { display: flex; flex-direction: column; }
+
+.stop {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0 28px;
+  position: relative;
+  padding-bottom: 60px;
+}
+.stop:last-child { padding-bottom: 0; }
+
+.stop:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 35px; top: 40px; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--line), transparent);
+}
+
+.stop-time-col {
+  display: flex; flex-direction: column;
+  align-items: center; padding-top: 4px; gap: 12px;
+}
+
+.stop-marker {
+  width: 12px; height: 12px;
+  border-radius: 50%; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+
+.stop:nth-child(1) .stop-marker { background: var(--gold); box-shadow: 0 0 12px var(--glow-gold), 0 0 24px rgba(255,233,70,.2); }
+.stop:nth-child(2) .stop-marker { background: var(--red);  box-shadow: 0 0 12px var(--glow-red),  0 0 24px rgba(255,61,61,.2); }
+.stop:nth-child(3) .stop-marker { background: var(--blue); box-shadow: 0 0 12px var(--glow-blue), 0 0 24px rgba(79,195,247,.2); }
+
+.stop-hr {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; color: var(--dim);
+  text-align: center; line-height: 1.3;
+}
+
+.stop-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.stop-name {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 700; letter-spacing: .02em;
+  line-height: 1.1; margin-bottom: 8px;
+}
+
+.stop:nth-child(1) .stop-name { color: var(--gold); }
+.stop:nth-child(2) .stop-name { color: var(--red); }
+.stop:nth-child(3) .stop-name { color: var(--blue); }
+
+.stop-addr {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .12em;
+  color: var(--dim); margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.stop-addr a {
+  color: var(--gold); text-decoration: none;
+  border-bottom: 1px solid rgba(255,233,70,.25);
+  transition: border-color .2s;
+}
+.stop-addr a:hover { border-color: var(--gold); }
+
+.stop-desc {
+  font-size: 14px; line-height: 1.8;
+  color: var(--dim); max-width: 460px;
+}
+.stop-desc strong { color: var(--text); font-weight: 400; }
+
+/* Mystery card */
+.mission-card {
+  border: 1px solid rgba(255,61,61,.2);
+  border-left: 2px solid var(--red);
+  background: rgba(255,61,61,.04);
+  border-radius: 4px; padding: 24px;
+  max-width: 460px; position: relative;
+  overflow: hidden;
+}
+.mission-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, var(--red), transparent);
+}
+.mission-card .card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 10px; display: block;
+}
+.mission-card h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px; font-weight: 700;
+  color: var(--text); margin-bottom: 10px;
+  letter-spacing: .02em;
+}
+.mission-card p { font-size: 13px; line-height: 1.75; color: var(--dim); }
+.mission-card p strong { color: var(--text); font-weight: 400; }
+
+/* ─── INTEL GRID ─── */
+.intel {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 0 40px 100px;
+}
+
+.intel-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 6px; overflow: hidden;
+}
+
+.intel-cell { background: var(--card); padding: 32px 28px; }
+.intel-cell .ico { font-size: 24px; margin-bottom: 14px; display: block; }
+.intel-cell h4 {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 10px;
+}
+.intel-cell p { font-size: 13px; line-height: 1.75; color: var(--dim); }
+.intel-cell p strong { color: var(--text); font-weight: 400; }
+.intel-cell a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(255,233,70,.25); }
+.intel-cell a:hover { border-color: var(--gold); }
+
+/* ─── SABER ─── */
+.saber {
+  display: flex; align-items: center;
+  justify-content: center;
+  margin: 0 auto 0; max-width: 400px;
+  position: relative; z-index: 1;
+  padding: 0 40px 60px;
+}
+.saber-hilt { width: 32px; height: 8px; background: linear-gradient(to right, #555, #888, #666); border-radius: 2px 0 0 2px; flex-shrink: 0; }
+.saber-blade { height: 3px; flex: 1; border-radius: 0 4px 4px 0; }
+.saber-blade.blue { background: var(--blue); box-shadow: 0 0 10px var(--blue), 0 0 30px rgba(79,195,247,.5), 0 0 60px rgba(79,195,247,.2); }
+
+/* ─── CONFIRM SECTION ─── */
+#confirm-section {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--line);
+  padding: 100px 40px;
+  text-align: center;
+}
+
+.confirm-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .35em;
+  text-transform: uppercase; color: var(--dim);
+  margin-bottom: 20px; display: block;
+}
+
+.confirm-big {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(36px, 9vw, 88px);
+  font-weight: 900;
+  color: var(--text); line-height: .9;
+  margin-bottom: 12px;
+}
+.confirm-big em { font-style: normal; color: var(--gold); text-shadow: 0 0 40px var(--glow-gold); }
+
+.confirm-sub {
+  font-size: 14px; font-style: italic; font-weight: 300;
+  color: var(--dim); margin-bottom: 52px;
+}
+
+/* Form */
+#confirm-form {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 16px;
+  max-width: 380px; margin: 0 auto;
+}
+
+#confirm-form input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; letter-spacing: .1em;
+  color: var(--text); outline: none;
+  transition: border-color .2s;
+}
+#confirm-form input::placeholder { color: var(--dim); }
+#confirm-form input:focus { border-color: rgba(255,233,70,.4); }
+
+.btn-confirm {
+  width: 100%;
+  background: var(--gold); color: #08060a;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .25em;
+  text-transform: uppercase; border: none;
+  padding: 16px 28px; border-radius: 3px; cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 0 24px rgba(255,233,70,.25);
+}
+.btn-confirm:hover { box-shadow: 0 0 40px rgba(255,233,70,.45); transform: translateY(-1px); }
+
+.btn-out {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--dim);
+  transition: color .2s; padding: 8px;
+}
+.btn-out:hover { color: var(--red); }
+
+/* Confirmation result */
+#confirm-result {
+  display: none;
+  flex-direction: column; align-items: center; gap: 20px;
+}
+
+.result-icon { font-size: 56px; animation: popIn .4s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+
+.result-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 5vw, 36px);
+  font-weight: 900; color: var(--gold);
+  letter-spacing: .03em;
+}
+
+.result-msg {
+  font-size: 14px; font-style: italic; color: var(--dim);
+  line-height: 1.8; max-width: 340px;
+}
+
+.result-msg.dark {
+  color: var(--red);
+}
+
+.result-fine {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--dim);
+  margin-top: 8px;
+}
+
+/* footer fine */
+.footer-fine {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dim);
+  line-height: 2; margin-top: 60px;
+  position: relative; z-index: 1;
+  text-align: center; padding-bottom: 60px;
+}
+
+/* ─── MOBILE ─── */
+@media (max-width: 600px) {
+  .topbar { padding: 16px 20px; }
+  .mission, .intel { padding-left: 20px; padding-right: 20px; }
+  #confirm-section { padding: 72px 20px; }
+  .rule { margin: 0 20px; }
+  .saber { padding-left: 20px; padding-right: 20px; }
+  .stop { grid-template-columns: 56px 1fr; gap: 0 16px; }
+  .stop:not(:last-child)::after { left: 27px; }
+  .intel-grid { grid-template-columns: 1fr; }
+  .planet { width: 260px; height: 260px; bottom: -60px; right: -60px; }
+  .hero { padding: 100px 20px 80px; }
+  .footer-fine { padding: 0 20px 60px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<!-- CRAWL -->
+<div id="crawl-screen">
+  <div class="crawl-fade-top"></div>
+  <div class="crawl-fade-bottom"></div>
+  <div class="crawl-wrapper">
+    <div class="crawl-inner">
+      <span class="crawl-episode">Episodio XXXIII</span>
+      <div class="crawl-title">La Venganza<br>de los 33</div>
+      <div class="crawl-body">
+        <p>
+          Han pasado treinta y tres años desde que Bruno Ramos apareció en la galaxia. Sus aliados más cercanos saben bien lo que eso significa.
+        </p>
+        <p>
+          Esta noche, la Alianza Rebelde se reúne en Madrid para celebrar como se merece. La misión: estar ahí, estar puntual, y sobrevivir la noche.
+        </p>
+        <p>
+          El plan está en marcha. Las coordenadas, a continuación…
+        </p>
+      </div>
+    </div>
+  </div>
+  <button class="skip-btn" onclick="skipCrawl()">Saltar →</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <div class="topbar">
+    <span class="topbar-left">Bruno · Ep. XXXIII</span>
+    <span class="topbar-right">Madrid · 21·03·2026</span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="planet"></div>
+    <p class="hero-tag">Episodio XXXIII &nbsp;·&nbsp; Madrid &nbsp;·&nbsp; 21 de marzo</p>
+    <div class="hero-main">33</div>
+    <div class="hero-name">Bruno</div>
+    <div class="hero-divider"></div>
+    <p class="hero-sub">Una noche con plan, con gente que importa, y algo guardado bajo la manga.</p>
+    <div class="hero-cta-row">
+      <a class="btn-primary" href="#mision">Ver la misión →</a>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- MISSION -->
+  <section class="mission" id="mision">
+    <div class="mission-header">
+      <h2 class="mission-title">La <span>Misión.</span></h2>
+      <span class="mission-code">Sábado 21 · Clasificado</span>
+    </div>
+
+    <div class="stops">
+
+      <!-- 1: BAR -->
+      <div class="stop">
+        <div class="stop-time-col">
+          <div class="stop-marker"></div>
+          <div class="stop-hr">19:15</div>
+        </div>
+        <div class="stop-body">
+          <p class="stop-num">Punto 01 — Base Rebelde</p>
+          <h3 class="stop-name">Trastevere</h3>
+          <p class="stop-addr">
+            <a href="https://maps.app.goo.gl/Y1F3ctPYcsn1g4Yo7" target="_blank">
+              C. del Corazón de María, 58 · Chamartín → Ver en Maps
+            </a>
+          </p>
+          <p class="stop-desc">
+            Aquí nos encontramos todos. <strong>7:15 en punto —</strong>
+            la misión tiene horario y no hay margen de error.
+            Unas cervezas para activar escudos, definir alianzas,
+            y movernos juntos al siguiente destino.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2: MYSTERY -->
+      <div class="stop">
+        <div class="stop-time-col">
+          <div class="stop-marker"></div>
+          <div class="stop-hr">20:00</div>
+        </div>
+        <div class="stop-body">
+          <p class="stop-num">Punto 02 — Misión clasificada</p>
+          <div class="mission-card">
+            <span class="card-label">⚠ Acceso restringido</span>
+            <h3>Destino desconocido</h3>
+            <p>
+              <strong>Activo, competitivo y con adrenalina garantizada.</strong>
+              Coordenadas reveladas en el bar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3: FRECUENCIA -->
+      <div class="stop">
+        <div class="stop-time-col">
+          <div class="stop-marker"></div>
+          <div class="stop-hr">Después</div>
+        </div>
+        <div class="stop-body">
+          <p class="stop-num">Punto 03 — Celebración Final</p>
+          <h3 class="stop-name">Bar Frecuencia</h3>
+          <p class="stop-desc">
+            La misión termina aquí. O más bien, <strong>empieza de verdad.</strong>
+            Sin hora de regreso al sector.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SABER -->
+  <div class="saber">
+    <div class="saber-hilt"></div>
+    <div class="saber-blade blue"></div>
+  </div>
+
+  <!-- INTEL -->
+  <div class="intel">
+    <div class="intel-grid">
+      <div class="intel-cell">
+        <span class="ico">👟</span>
+        <h4>Equipamiento</h4>
+        <p>Ven con <strong>zapatos cómodos</strong>. La misión lo requiere. No se dice más.</p>
+      </div>
+      <div class="intel-cell">
+        <span class="ico">📍</span>
+        <h4>Coordenadas</h4>
+        <p>
+          <a href="https://maps.app.goo.gl/Y1F3ctPYcsn1g4Yo7" target="_blank">Trastevere en Google Maps →</a><br><br>
+          De ahí nos movemos todos juntos al Punto 02.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <section id="confirm-section">
+    <span class="confirm-eyebrow">Bruno · 33 años · Sábado 21 de marzo</span>
+    <div class="confirm-big">¿Estás<br><em>dentro?</em></div>
+    <p class="confirm-sub">Confirma antes del miércoles 18. Cupo cerrado.</p>
+
+    <!-- Form -->
+    <div id="confirm-form">
+      <input type="text" id="name-input" placeholder="Tu nombre" maxlength="40" autocomplete="off">
+      <button class="btn-confirm" onclick="confirmIn()">Estoy dentro ⚡</button>
+      <button class="btn-out" onclick="confirmOut()">No puedo esta noche</button>
+    </div>
+
+    <!-- Result -->
+    <div id="confirm-result">
+      <div class="result-icon" id="result-icon"></div>
+      <div class="result-title" id="result-title"></div>
+      <p class="result-msg" id="result-msg"></p>
+      <p class="result-fine" id="result-fine"></p>
+    </div>
+  </section>
+
+  <p class="footer-fine">
+    Que la Fuerza te acompañe. Y llega puntual.
+  </p>
+
+</div><!-- /main -->
+
+<script>
+/* ── STARS ── */
+const canvas = document.getElementById('stars-canvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateStars();
+}
+
+function generateStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 3000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + 0.2,
+      o: Math.random() * 0.7 + 0.1,
+      speed: Math.random() * 0.3 + 0.05,
+      twinkle: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const s of stars) {
+    s.twinkle += s.speed * 0.02;
+    const alpha = s.o * (0.5 + 0.5 * Math.sin(s.twinkle));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200,210,255,${alpha})`;
+    ctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+
+window.addEventListener('resize', resize);
+resize();
+drawStars();
+
+/* ── CRAWL ── */
+function endCrawl() {
+  const screen = document.getElementById('crawl-screen');
+  const main   = document.getElementById('main');
+  screen.style.transition = 'opacity 1s';
+  screen.style.opacity = '0';
+  setTimeout(() => {
+    screen.style.display = 'none';
+    main.classList.add('visible');
+  }, 1000);
+}
+function skipCrawl() { endCrawl(); }
+setTimeout(endCrawl, 18000);
+
+/* ── CONFIRM ── */
+const inResponses = [
+  { icon: '⚡', title: '¡Bienvenido a la Alianza!', msg: 'Tu nombre está registrado en los archivos rebeldes. Nos vemos el sábado.', fine: 'Trastevere · 19:15 · Sábado 21' },
+  { icon: '🚀', title: 'Coordenadas recibidas', msg: 'La Alianza te espera. Zapatos cómodos y sin preguntas.', fine: 'Trastevere · 19:15 · Sábado 21' },
+  { icon: '✨', title: '¡La Fuerza es fuerte contigo!', msg: 'Misión aceptada. El resto se revela en el bar.', fine: 'Trastevere · 19:15 · Sábado 21' },
+];
+
+const outResponses = [
+  { icon: '💀', title: 'Unirse al Imperio fue tu decisión.', msg: 'Te vamos a extrañar. O no. Ya veremos.', fine: 'Siguiente vez: sin excusas.' },
+  { icon: '😞', title: 'Traidor detectado.', msg: 'La Alianza tomó nota. Bruno, también.', fine: 'El lado oscuro no perdona.' },
+];
+
+async function confirmIn() {
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) {
+    document.getElementById('name-input').focus();
+    document.getElementById('name-input').style.borderColor = 'rgba(255,61,61,.6)';
+    document.getElementById('name-input').placeholder = 'Escribe tu nombre primero';
+    return;
+  }
+
+  // Show loading state
+  const btn = document.querySelector('.btn-confirm');
+  btn.textContent = 'Enviando…';
+  btn.disabled = true;
+
+  try {
+    await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: 'TU_ACCESS_KEY_AQUI',
+        subject: `🎉 ${name} confirma para el cumple de Bruno`,
+        message: `${name} confirmó asistencia desde 33br.uno`,
+        from_name: name,
+      })
+    });
+  } catch(e) { /* silent fail — show success anyway */ }
+
+  const r = inResponses[Math.floor(Math.random() * inResponses.length)];
+  showResult(
+    r.icon,
+    r.title,
+    `${name}, ${r.msg.charAt(0).toLowerCase()}${r.msg.slice(1)}`,
+    r.fine,
+    false
+  );
+}
+
+function confirmOut() {
+  const r = outResponses[Math.floor(Math.random() * outResponses.length)];
+  showResult(r.icon, r.title, r.msg, r.fine, true);
+}
+
+function showResult(icon, title, msg, fine, isDark) {
+  document.getElementById('confirm-form').style.display = 'none';
+  const result = document.getElementById('confirm-result');
+  result.style.display = 'flex';
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  const msgEl = document.getElementById('result-msg');
+  msgEl.textContent = msg;
+  msgEl.className = 'result-msg' + (isDark ? ' dark' : '');
+  document.getElementById('result-fine').textContent = fine;
+}
+</script>
+</body>
+</html>
