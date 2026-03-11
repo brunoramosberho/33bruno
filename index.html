@@ -545,6 +545,83 @@ body {
   margin-top: 8px;
 }
 
+/* ─── RETURNING USER ─── */
+#confirm-returning {
+  display: none;
+  flex-direction: column; align-items: center; gap: 0;
+  max-width: 440px; margin: 0 auto;
+}
+
+.ret-icon { font-size: 48px; margin-bottom: 20px; }
+
+.ret-greeting {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 5vw, 32px);
+  font-weight: 900; color: var(--text);
+  letter-spacing: .02em; margin-bottom: 6px;
+}
+.ret-greeting em { font-style: normal; color: var(--gold); }
+
+.ret-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .3em;
+  text-transform: uppercase; margin-bottom: 36px;
+}
+.ret-status.status-in { color: var(--gold); }
+.ret-status.status-out { color: var(--red); }
+
+.ret-intel {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.ret-intel-row {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.ret-intel-row:last-child { border-bottom: none; }
+
+.ret-intel-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .25em;
+  text-transform: uppercase; color: var(--dim);
+}
+.ret-intel-value {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; color: var(--text);
+  text-align: right;
+}
+.ret-intel-value a {
+  color: var(--gold); text-decoration: none;
+  border-bottom: 1px solid rgba(255,233,70,.25);
+}
+.ret-intel-value a:hover { border-color: var(--gold); }
+
+.btn-change {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 12px 24px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--dim);
+  cursor: pointer; transition: all .2s;
+}
+.btn-change:hover { border-color: rgba(255,233,70,.4); color: var(--gold); }
+
+.ret-clear {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .15em;
+  color: var(--dim); opacity: .25;
+  margin-top: 48px; padding: 8px;
+  transition: opacity .3s;
+}
+.ret-clear:hover { opacity: .6; }
+
 /* footer fine */
 .footer-fine {
   font-family: 'Space Mono', monospace;
@@ -737,6 +814,39 @@ body {
       <p class="result-msg" id="result-msg"></p>
       <p class="result-fine" id="result-fine"></p>
     </div>
+
+    <!-- Returning user -->
+    <div id="confirm-returning">
+      <div class="ret-icon" id="ret-icon"></div>
+      <div class="ret-greeting" id="ret-greeting"></div>
+      <div class="ret-status" id="ret-status"></div>
+
+      <div class="ret-intel" id="ret-intel">
+        <div class="ret-intel-row">
+          <span class="ret-intel-label">Fecha</span>
+          <span class="ret-intel-value">Sábado 21 de marzo</span>
+        </div>
+        <div class="ret-intel-row">
+          <span class="ret-intel-label">Hora</span>
+          <span class="ret-intel-value">19:15</span>
+        </div>
+        <div class="ret-intel-row">
+          <span class="ret-intel-label">Punto de encuentro</span>
+          <span class="ret-intel-value"><a href="https://maps.app.goo.gl/Y1F3ctPYcsn1g4Yo7" target="_blank">Trastevere →</a></span>
+        </div>
+        <div class="ret-intel-row">
+          <span class="ret-intel-label">Dirección</span>
+          <span class="ret-intel-value">C. Corazón de María, 58</span>
+        </div>
+        <div class="ret-intel-row">
+          <span class="ret-intel-label">Equipamiento</span>
+          <span class="ret-intel-value">Zapatos cómodos</span>
+        </div>
+      </div>
+
+      <button class="btn-change" onclick="changeResponse()">Cambiar mi respuesta</button>
+      <button class="ret-clear" onclick="clearRecord()">Reiniciar transmisión</button>
+    </div>
   </section>
 
   <p class="footer-fine">
@@ -842,6 +952,8 @@ async function confirmIn() {
     });
   } catch(e) { /* silent fail — show success anyway */ }
 
+  localStorage.setItem('rsvp', JSON.stringify({ name, status: 'in' }));
+
   const r = inResponses[Math.floor(Math.random() * inResponses.length)];
   showResult(
     r.icon,
@@ -868,6 +980,8 @@ async function confirmOut() {
     });
   } catch(e) {}
 
+  localStorage.setItem('rsvp', JSON.stringify({ name, status: 'out' }));
+
   const r = outResponses[Math.floor(Math.random() * outResponses.length)];
   showResult(r.icon, r.title, r.msg, r.fine, true);
 }
@@ -883,6 +997,68 @@ function showResult(icon, title, msg, fine, isDark) {
   msgEl.className = 'result-msg' + (isDark ? ' dark' : '');
   document.getElementById('result-fine').textContent = fine;
 }
+
+/* ── RETURNING USER ── */
+function showReturning(rsvp) {
+  document.getElementById('confirm-form').style.display = 'none';
+  document.getElementById('confirm-result').style.display = 'none';
+
+  const isIn = rsvp.status === 'in';
+  document.getElementById('ret-icon').textContent = isIn ? '⚡' : '👀';
+  document.getElementById('ret-greeting').innerHTML = isIn
+    ? `De vuelta, <em>${rsvp.name}</em>`
+    : `<em>${rsvp.name}</em>, aún estás a tiempo`;
+  const statusEl = document.getElementById('ret-status');
+  statusEl.textContent = isIn ? '✓ Misión aceptada' : '✗ Rechazaste la misión';
+  statusEl.className = 'ret-status ' + (isIn ? 'status-in' : 'status-out');
+
+  document.getElementById('ret-intel').style.display = isIn ? 'block' : 'none';
+
+  const heading = document.querySelector('.confirm-big');
+  const sub = document.querySelector('.confirm-sub');
+  if (isIn) {
+    heading.innerHTML = 'Nos<br><em>vemos</em>';
+    sub.textContent = 'Tu lugar en la Alianza está asegurado. Aquí tienes las coordenadas.';
+  } else {
+    heading.innerHTML = '¿Seguro<br><em>que no?</em>';
+    sub.textContent = 'La Alianza todavía te espera. Puedes cambiar de opinión.';
+  }
+
+  document.getElementById('confirm-returning').style.display = 'flex';
+}
+
+function changeResponse() {
+  localStorage.removeItem('rsvp');
+  document.getElementById('confirm-returning').style.display = 'none';
+
+  document.querySelector('.confirm-big').innerHTML = '¿Estás<br><em>dentro?</em>';
+  document.querySelector('.confirm-sub').textContent = 'Confirma antes del miércoles 18. Cupo cerrado.';
+
+  const form = document.getElementById('confirm-form');
+  form.style.display = 'flex';
+  const btn = document.querySelector('.btn-confirm');
+  btn.textContent = 'Estoy dentro ⚡';
+  btn.disabled = false;
+  document.getElementById('name-input').value = '';
+}
+
+function clearRecord() {
+  localStorage.removeItem('rsvp');
+  location.reload();
+}
+
+/* ── INIT: CHECK RETURNING USER ── */
+(function checkReturning() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('rsvp'));
+    if (saved && saved.name && saved.status) {
+      const screen = document.getElementById('crawl-screen');
+      screen.style.display = 'none';
+      document.getElementById('main').classList.add('visible');
+      showReturning(saved);
+    }
+  } catch(e) {}
+})()
 </script>
 </body>
 </html>
