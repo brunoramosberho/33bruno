@@ -485,7 +485,7 @@ body {
   border-radius: 4px;
   padding: 14px 20px;
   font-family: 'Space Mono', monospace;
-  font-size: 12px; letter-spacing: .1em;
+  font-size: 16px; letter-spacing: .1em;
   color: var(--text); outline: none;
   transition: border-color .2s;
 }
@@ -966,7 +966,13 @@ async function confirmIn() {
 }
 
 async function confirmOut() {
-  const name = document.getElementById('name-input').value.trim() || 'Alguien';
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) {
+    document.getElementById('name-input').focus();
+    document.getElementById('name-input').style.borderColor = 'rgba(255,61,61,.6)';
+    document.getElementById('name-input').placeholder = 'Escribe tu nombre primero';
+    return;
+  }
 
   try {
     await fetch('https://api.web3forms.com/submit', {
