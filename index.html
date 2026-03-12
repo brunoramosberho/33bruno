@@ -492,6 +492,35 @@ body {
 #confirm-form input::placeholder { color: var(--dim); }
 #confirm-form input:focus { border-color: rgba(255,233,70,.4); }
 
+#plus-ones {
+  width: 100%;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+#plus-ones input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 16px; letter-spacing: .1em;
+  color: var(--text); outline: none;
+  transition: border-color .2s;
+}
+#plus-ones input::placeholder { color: var(--dim); }
+#plus-ones input:focus { border-color: rgba(255,233,70,.4); }
+
+.btn-add-person {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--dim);
+  padding: 4px 0; transition: color .2s;
+  align-self: flex-start;
+}
+.btn-add-person:hover { color: var(--gold); }
+
 .btn-confirm {
   width: 100%;
   background: var(--gold); color: #08060a;
@@ -803,6 +832,8 @@ body {
     <!-- Form -->
     <div id="confirm-form">
       <input type="text" id="name-input" placeholder="Tu nombre" maxlength="40" autocomplete="off">
+      <div id="plus-ones"></div>
+      <button class="btn-add-person" onclick="addPerson()">+ ¿Vienes acompañado?</button>
       <button class="btn-confirm" onclick="confirmIn()">Estoy dentro ⚡</button>
       <button class="btn-out" onclick="confirmOut()">No puedo esta noche</button>
     </div>
@@ -914,6 +945,29 @@ function endCrawl() {
 function skipCrawl() { endCrawl(); }
 setTimeout(endCrawl, 31000);
 
+/* ── PLUS ONES ── */
+let plusCount = 0;
+function addPerson() {
+  plusCount++;
+  const container = document.getElementById('plus-ones');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = `Nombre del acompañante ${plusCount > 1 ? plusCount : ''}`.trim();
+  input.maxLength = 40;
+  input.autocomplete = 'off';
+  input.className = 'plus-input';
+  container.appendChild(input);
+  input.focus();
+}
+
+function getAllNames() {
+  const main = document.getElementById('name-input').value.trim();
+  const extras = [...document.querySelectorAll('.plus-input')]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+  return { main, extras, all: [main, ...extras].filter(Boolean) };
+}
+
 /* ── CONFIRM ── */
 const inResponses = [
   { icon: '⚡', title: '¡Bienvenido a la Alianza!', msg: 'Tu nombre está registrado en los archivos rebeldes. Nos vemos el viernes.', fine: 'Trastevere · 19:00 · Viernes 20' },
@@ -927,18 +981,20 @@ const outResponses = [
 ];
 
 async function confirmIn() {
-  const name = document.getElementById('name-input').value.trim();
-  if (!name) {
+  const { main, extras, all } = getAllNames();
+  if (!main) {
     document.getElementById('name-input').focus();
     document.getElementById('name-input').style.borderColor = 'rgba(255,61,61,.6)';
     document.getElementById('name-input').placeholder = 'Escribe tu nombre primero';
     return;
   }
 
-  // Show loading state
   const btn = document.querySelector('.btn-confirm');
   btn.textContent = 'Enviando…';
   btn.disabled = true;
+
+  const label = all.length > 1 ? all.join(' y ') : main;
+  const count = all.length > 1 ? ` (${all.length} personas)` : '';
 
   try {
     await fetch('https://api.web3forms.com/submit', {
@@ -946,33 +1002,35 @@ async function confirmIn() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         access_key: 'fc56a20d-1894-4c1f-8713-c95363e25aa2',
-        subject: `🎉 ${name} confirma para el cumple de Bruno`,
-        message: `${name} confirmó asistencia desde 33br.uno`,
-        from_name: name,
+        subject: `🎉 ${label} confirma${all.length > 1 ? 'n' : ''} para el cumple de Bruno${count}`,
+        message: `${label} confirmó asistencia desde 33br.uno${count}`,
+        from_name: main,
       })
     });
-  } catch(e) { /* silent fail — show success anyway */ }
+  } catch(e) {}
 
-  localStorage.setItem('rsvp', JSON.stringify({ name, status: 'in' }));
+  localStorage.setItem('rsvp', JSON.stringify({ name: main, extras, status: 'in' }));
 
   const r = inResponses[Math.floor(Math.random() * inResponses.length)];
   showResult(
     r.icon,
     r.title,
-    `${name}, ${r.msg.charAt(0).toLowerCase()}${r.msg.slice(1)}`,
+    `${label}, ${r.msg.charAt(0).toLowerCase()}${r.msg.slice(1)}`,
     r.fine,
     false
   );
 }
 
 async function confirmOut() {
-  const name = document.getElementById('name-input').value.trim();
-  if (!name) {
+  const { main, extras, all } = getAllNames();
+  if (!main) {
     document.getElementById('name-input').focus();
     document.getElementById('name-input').style.borderColor = 'rgba(255,61,61,.6)';
     document.getElementById('name-input').placeholder = 'Escribe tu nombre primero';
     return;
   }
+
+  const label = all.length > 1 ? all.join(' y ') : main;
 
   try {
     await fetch('https://api.web3forms.com/submit', {
@@ -980,14 +1038,14 @@ async function confirmOut() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         access_key: 'fc56a20d-1894-4c1f-8713-c95363e25aa2',
-        subject: `😞 ${name} NO puede venir al cumple de Bruno`,
-        message: `${name} dijo que no puede venir. Desde 33br.uno`,
-        from_name: name,
+        subject: `😞 ${label} NO puede${all.length > 1 ? 'n' : ''} venir al cumple de Bruno`,
+        message: `${label} dijo que no puede${all.length > 1 ? 'n' : ''} venir. Desde 33br.uno`,
+        from_name: main,
       })
     });
   } catch(e) {}
 
-  localStorage.setItem('rsvp', JSON.stringify({ name, status: 'out' }));
+  localStorage.setItem('rsvp', JSON.stringify({ name: main, extras, status: 'out' }));
 
   const r = outResponses[Math.floor(Math.random() * outResponses.length)];
   showResult(r.icon, r.title, r.msg, r.fine, true);
@@ -1011,15 +1069,30 @@ function showReturning(rsvp) {
   document.getElementById('confirm-result').style.display = 'none';
 
   const isIn = rsvp.status === 'in';
+  const hasExtras = rsvp.extras && rsvp.extras.length > 0;
+  const allNames = hasExtras ? [rsvp.name, ...rsvp.extras] : [rsvp.name];
+
   document.getElementById('ret-icon').textContent = isIn ? '⚡' : '👀';
   document.getElementById('ret-greeting').innerHTML = isIn
     ? `De vuelta, <em>${rsvp.name}</em>`
     : `<em>${rsvp.name}</em>, aún estás a tiempo`;
   const statusEl = document.getElementById('ret-status');
-  statusEl.textContent = isIn ? '✓ Misión aceptada' : '✗ Rechazaste la misión';
+  statusEl.textContent = isIn
+    ? `✓ Misión aceptada${hasExtras ? ` · ${allNames.length} personas` : ''}`
+    : '✗ Rechazaste la misión';
   statusEl.className = 'ret-status ' + (isIn ? 'status-in' : 'status-out');
 
   document.getElementById('ret-intel').style.display = isIn ? 'block' : 'none';
+
+  const existingGroup = document.getElementById('ret-group-row');
+  if (existingGroup) existingGroup.remove();
+  if (isIn && hasExtras) {
+    const row = document.createElement('div');
+    row.className = 'ret-intel-row';
+    row.id = 'ret-group-row';
+    row.innerHTML = `<span class="ret-intel-label">Grupo</span><span class="ret-intel-value">${allNames.join(', ')}</span>`;
+    document.getElementById('ret-intel').prepend(row);
+  }
 
   const heading = document.querySelector('.confirm-big');
   const sub = document.querySelector('.confirm-sub');
