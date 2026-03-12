@@ -513,16 +513,16 @@ body {
 
 .btn-add-person {
   width: 100%;
-  background: none; cursor: pointer;
-  border: 1px dashed var(--line);
+  background: rgba(255,233,70,.04); cursor: pointer;
+  border: 1px dashed rgba(255,233,70,.3);
   border-radius: 4px;
   font-family: 'Space Mono', monospace;
   font-size: 11px; letter-spacing: .1em;
-  color: var(--dim);
+  color: var(--gold); opacity: .75;
   padding: 12px 20px;
   transition: all .2s;
 }
-.btn-add-person:hover { border-color: rgba(255,233,70,.35); color: var(--gold); }
+.btn-add-person:hover { border-color: rgba(255,233,70,.5); opacity: 1; }
 
 .btn-confirm {
   width: 100%;
@@ -538,16 +538,16 @@ body {
 
 .btn-out {
   width: 100%;
-  background: none; cursor: pointer;
-  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03); cursor: pointer;
+  border: 1px solid rgba(255,255,255,.12);
   border-radius: 3px;
   font-family: 'Space Mono', monospace;
   font-size: 10px; letter-spacing: .15em;
-  text-transform: uppercase; color: var(--dim);
+  text-transform: uppercase; color: var(--text); opacity: .6;
   padding: 13px 20px;
   transition: all .2s;
 }
-.btn-out:hover { border-color: rgba(255,61,61,.4); color: var(--red); }
+.btn-out:hover { border-color: rgba(255,61,61,.4); color: var(--red); opacity: 1; }
 
 /* Confirmation result */
 #confirm-result {
