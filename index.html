@@ -512,14 +512,17 @@ body {
 #plus-ones input:focus { border-color: rgba(255,233,70,.4); }
 
 .btn-add-person {
-  background: none; border: none; cursor: pointer;
+  width: 100%;
+  background: none; cursor: pointer;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
   font-family: 'Space Mono', monospace;
-  font-size: 10px; letter-spacing: .15em;
-  text-transform: uppercase; color: var(--dim);
-  padding: 4px 0; transition: color .2s;
-  align-self: flex-start;
+  font-size: 11px; letter-spacing: .1em;
+  color: var(--dim);
+  padding: 12px 20px;
+  transition: all .2s;
 }
-.btn-add-person:hover { color: var(--gold); }
+.btn-add-person:hover { border-color: rgba(255,233,70,.35); color: var(--gold); }
 
 .btn-confirm {
   width: 100%;
@@ -534,13 +537,17 @@ body {
 .btn-confirm:hover { box-shadow: 0 0 40px rgba(255,233,70,.45); transform: translateY(-1px); }
 
 .btn-out {
-  background: none; border: none; cursor: pointer;
+  width: 100%;
+  background: none; cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 3px;
   font-family: 'Space Mono', monospace;
-  font-size: 10px; letter-spacing: .2em;
+  font-size: 10px; letter-spacing: .15em;
   text-transform: uppercase; color: var(--dim);
-  transition: color .2s; padding: 8px;
+  padding: 13px 20px;
+  transition: all .2s;
 }
-.btn-out:hover { color: var(--red); }
+.btn-out:hover { border-color: rgba(255,61,61,.4); color: var(--red); }
 
 /* Confirmation result */
 #confirm-result {
